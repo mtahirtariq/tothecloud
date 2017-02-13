@@ -1,0 +1,90 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+        <title>Save Remote Files to your Dropbox</title>
+
+        <script type="text/javascript" src="https://www.dropbox.com/static/api/2/dropins.js" id="dropboxjs" data-app-key="zo6g1nmeblne2ng"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+        <script type="text/javascript">
+            $(document).ready(function(e) {
+                $('#submit_button').on('click', function() {
+                    var file_link = $("#file_link").val();
+                    var file_name = $("#file_name").val();
+                    if( file_link ) {
+                        var options = {
+                            files: [],
+                            success: function() {
+                                $("#msgs").text("File saved to Dropbox.");
+                            },
+                            error: function(err_msg) {
+                                $("#msgs").text("Error: " + err_msg);
+                            },
+                            cancel: function() {
+                                $("#msgs").text("You cancelled the upload.");
+                            },
+                            progress: function(progress) {
+                                $("#progress_bar").attr({
+                                    value: progress,
+                                });
+                                $("#progress_bar").show();
+                            },
+                        };
+                        if( file_name ) {
+                            options.files.push({
+                                'url': file_link,
+                                'filename': file_name,
+                            });
+                        } else {
+                            options.files.push({
+                                'url': file_link,
+                            })
+                        }
+                        Dropbox.save(options);
+                    } else {
+                        $("#msgs").text("No file link provided.");
+                    }
+                });
+            });
+        </script>
+
+        <style type="text/css">
+            label {
+                display: block;
+            }
+            input {
+                width: 15em;
+            }
+            button {
+                width: 8em;
+            }
+            progress {
+                width: 15em;
+                display: none;
+            }
+        </style>
+
+    </head>
+
+    <body>
+        <center>
+            <div>
+                <label>Direct Link to file:</label>
+                <input type="text" id="file_link" />
+            </div>
+            <div>
+                <label>File name(optional):</label>
+                <input type="text" id="file_name" />
+            </div>
+            <div style="text-align:center">
+                <button id="submit_button">Save</button>
+                <br />
+                <progress id="progress_bar" max="1" value="0"></progress>
+                <div id="msgs"> </div>
+            </div>
+        </center>
+    </body>
+</html>
